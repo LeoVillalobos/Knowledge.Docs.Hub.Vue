@@ -5,7 +5,6 @@ import { responseBody, responseError } from "@/helpers/axiosResponse";
 
 /**
  * @method getPasswordsByUserId
- * @param {string} userId - El ID del usuario para el que se desean obtener las contraseñas
  * @returns {Promise<IPassword[]>} - Una promesa que resuelve un arreglo de contraseñas
  */
 const getPasswordsByUserId = (): Promise<IPassword[]> =>

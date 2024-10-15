@@ -17,7 +17,7 @@ const routes = [
     meta: {
       requiresAuth: true
     },
-    redirect: "/main",
+    redirect: "/",
     component: () => import("@/layouts/FullLayout.vue"),
     children: [
       {
@@ -46,7 +46,7 @@ const routes = [
     meta: {
       requiresAuth: true
     },
-    redirect: "/auth",
+    redirect: "/auth/login",
     component: () => import("@/layouts/about/AboutLayout.vue"),
     children: [
       {

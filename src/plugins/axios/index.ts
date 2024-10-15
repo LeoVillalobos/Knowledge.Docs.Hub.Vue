@@ -3,7 +3,7 @@ import axios, { type InternalAxiosRequestConfig } from "axios";
 import Cookies from 'js-cookie';
 import { COOKIE_NAME_SESSION } from "@/helpers/constants";
 // Configura la base URL de Axios
-axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
+axios.defaults.baseURL = "http://localhost:3001/api/";//import.meta.env.VITE_API_BASE_URL;
 
 const axiosConfig = () => {
   // Obtén el store de autenticación
@@ -14,6 +14,8 @@ const axiosConfig = () => {
     (config: InternalAxiosRequestConfig) => {
       const authStore = useAuthStore();
       const token = authStore.token || Cookies.get(COOKIE_NAME_SESSION); // Toma el token del store o la cookie
+
+      console.log("token", token);
 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`; // Añade el token a las cabeceras

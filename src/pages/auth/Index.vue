@@ -8,6 +8,7 @@ import { ILogin } from "@/models/auth";
 import { COOKIE_NAME_SESSION } from '@/helpers/constants';
 import { signInWithEmailAndPassword, UserCredential } from 'firebase/auth';
 import { auth } from "@/firebase";
+import { handleFinishError } from "@/helpers/toastAlert";
 
 const router = useRouter();
 const store = useAuthStore();
@@ -17,15 +18,16 @@ const user: ILogin = reactive({
   password: "",
 });
 
-interface IToken {
-  accessToken: string;
+interface IFirebase  {
+  FirebaseError: {
+    Error: any;
+  }
 }
-
 const login = async () => {
   try {
 
-    // const response = await loginUser(user);
     const userCredential: UserCredential = await signInWithEmailAndPassword(auth, user.username, user.password);
+
     // Extraer el token de la respuesta (suponiendo que la respuesta tiene una propiedad 'token')
     const token = await userCredential.user.getIdToken();
 
@@ -37,12 +39,28 @@ const login = async () => {
     Cookies.set(COOKIE_NAME_SESSION, token);
 
     // Redirige al usuario
-    router.push({ name: 'Home' });
+    router.push({ path: "/main" });
 
   } catch (error) {
     console.error("Error en la autenticación:", error);
+    handleFinishError(`Error en la autenticación: ${handleError(error)} `);
     // Manejo de errores: podrías mostrar un mensaje de error al usuario
   }
+};
+
+const handleError = (error: any): string => {
+  // Mapeo de códigos de error a mensajes personalizados
+  const errorMessages: { [key: string]: string } = {
+    'auth/invalid-email': 'El correo electrónico es inválido.',
+    'auth/wrong-password': 'La contraseña es incorrecta.',
+    'auth/user-not-found': 'No se encontró ningún usuario con este correo.',
+    'auth/missing-password': 'La contraseña es obligatoria.',
+    'auth/invalid-credential': 'La credencial es inválida.',
+    // Puedes agregar más códigos de error según sea necesario
+  };
+
+  // Retornar el mensaje correspondiente o un mensaje genérico si no está mapeado
+  return errorMessages[error.code] || `Error en la autenticación: ${error.message}`;
 };
 
 onMounted(() => {
@@ -142,6 +160,7 @@ onMounted(() => {
                         color="reyma-blue-marine"
                         baseColor="reyma-blue-marine"
                         :counter="350"
+                        @keyup.enter="login"
                       >
                       </v-text-field>
                     </v-col>
